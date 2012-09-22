@@ -1,9 +1,11 @@
 ﻿<Window x:Class="ReactiveOctocat.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"   
-        xmlns:gif="http://wpfanimatedgif.codeplex.com"
-
+        xmlns:gif="http://wpfanimatedgif.codeplex.com" xmlns:vm="clr-namespace:ReactiveOctocat.ViewModels"
         Title="MainWindow" Height="350" Width="525" FontSize="18" WindowState="Maximized">
+    <Window.DataContext>
+        <vm:MainViewModel/>
+    </Window.DataContext>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*"/>
@@ -18,8 +20,6 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
-
-
                 </Grid.RowDefinitions>
                 
                 <TextBlock Text="Reactive Octocat!" FontSize="40" HorizontalAlignment="Center"/>
@@ -44,17 +44,18 @@
                 <GroupBox Header="Repositories" Grid.Row="5" >
                     <ListBox />
                 </GroupBox>
-
-
-
             </Grid>
-
         </Border>
         
         <Border Grid.Column="1" BorderBrush="Black" BorderThickness="2" Margin="0,0,40,0">
             <Grid>
-                <Image Source="Resources/red-polo.png"/>
-                <Image gif:ImageBehavior.AnimatedSource="Resources/nyantocat.gif" Visibility="Collapsed"/>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="Hello: " Visibility="Collapsed" FontSize="40" HorizontalAlignment="Center"/>
+                <Image Source="Resources/red-polo.png" Grid.Row="1"/>
+                <Image gif:ImageBehavior.AnimatedSource="Resources/nyantocat.gif" Visibility="Collapsed" Grid.Row="1"/>
             </Grid>
         </Border>
         
