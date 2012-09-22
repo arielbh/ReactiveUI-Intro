@@ -56,7 +56,7 @@
                 </Grid.RowDefinitions>
                 <TextBlock Text="{Binding LoggedInUser.Name, StringFormat=Hello: {0}}" Visibility="{Binding IsUserLoggedIn}" FontSize="40" HorizontalAlignment="Center"/>
                 <Image Source="Resources/red-polo.png" Grid.Row="1"/>
-                <Image gif:ImageBehavior.AnimatedSource="Resources/nyantocat.gif" Visibility="Collapsed" Grid.Row="1"/>
+                <Image gif:ImageBehavior.AnimatedSource="Resources/nyantocat.gif" Visibility="{Binding IsInProgress}" Grid.Row="1"/>
             </Grid>
         </Border>
         
