@@ -1,0 +1,16 @@
+ReactiveUI (MVVM part 2)
+
+Intro 
+
+--- 5 min
+What is MVVM 
+  Show a few slides
+What is Reactive Extensions
+  Show a few slides
+      
+Demo
+  Change an MVVM app to use ReactiveUI instead
+
+Summary
+
+
