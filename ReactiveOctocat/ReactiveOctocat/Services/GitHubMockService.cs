@@ -36,7 +36,7 @@ namespace ReactiveOctocat.Services
 
         public User Login(string userName, string password)
         {
-            Thread.Sleep(5000);
+            //Thread.Sleep(5000);
             return new User {Name = userName};
         }
 
@@ -44,7 +44,7 @@ namespace ReactiveOctocat.Services
         {
             _current++;
             if (_current == 4) _current = 1;
-            Thread.Sleep(4000);
+            Thread.Sleep(1000);
             return _repositories[_current];
         }
     }
@@ -63,7 +63,22 @@ namespace ReactiveOctocat.Services
 
     internal class User
     {
+        protected bool Equals(User other)
+        {
+            return string.Equals(Name, other.Name);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Name != null ? Name.GetHashCode() : 0);
+        }
+
         public string Name { get; set; }
+
+        public override bool Equals(object obj)
+        {
+            return (obj as User).Name == Name;
+        }
     }
 
 }

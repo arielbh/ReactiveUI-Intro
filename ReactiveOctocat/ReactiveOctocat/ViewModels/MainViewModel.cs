@@ -13,6 +13,7 @@ namespace ReactiveOctocat.ViewModels
     class MainViewModel : ReactiveObject
     {
         private IGitHubService _gitHubService = new GitHubMockService();
+        private MemoizingMRUCache<User, Repository[]>  _cache;
 
         public MainViewModel()
         {
@@ -29,12 +30,17 @@ namespace ReactiveOctocat.ViewModels
             this.ObservableForProperty(x => x.LoggedInUser,
                                        user => user == null ? Visibility.Hidden : Visibility.Visible).Subscribe(v => IsUserLoggedIn = v);
 
+            _cache = new MemoizingMRUCache<User, Repository[]>((user,_) =>
+                                                                          _gitHubService.GetRepositories(user), 3);
+                
+
             this.WhenAny(t => t.LoggedInUser, u => u.Value != null).Subscribe(filter =>
                 
             {
                 if (filter)
                 {
-                    Repositories = new ReactiveCollection<Repository>(_gitHubService.GetRepositories(LoggedInUser));
+
+                    Repositories = new ReactiveCollection<Repository>(_cache.Get(LoggedInUser));
                 }
             });
         }
