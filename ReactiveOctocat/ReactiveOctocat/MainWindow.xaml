@@ -43,7 +43,26 @@
                         Command="{Binding LoginCommand}"/>
 
                 <GroupBox Header="Repositories" Grid.Row="5" >
-                    <ListBox />
+                    <ListBox ItemsSource="{Binding Repositories}" >
+                        <ListBox.Resources>
+                            
+                        
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                        </ListBox.Resources>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="5" BorderBrush="Black" BorderThickness="1" >
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" >
+                                    
+                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" Margin="10"/>
+                                        <TextBlock Text="{Binding Language}" Margin="10" HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
                 </GroupBox>
             </Grid>
         </Border>
