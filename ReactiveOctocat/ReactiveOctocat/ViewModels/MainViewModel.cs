@@ -6,7 +6,7 @@ using ReactiveOctocat.Services;
 
 namespace ReactiveOctocat.ViewModels
 {
-    class MainViewModel
+    class MainViewModel 
     {
         private IGitHubService _gitHubService = new GitHubMockService();
 
