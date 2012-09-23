@@ -20,12 +20,18 @@ namespace ReactiveOctocat.ViewModels
             IsInProgress = Visibility.Collapsed;
 
             LoginCommand = new ReactiveAsyncCommand(this.WhenAny(t => t.UserName, t => t.Password, (x, y) => !string.IsNullOrEmpty(x.Value) && !string.IsNullOrEmpty(y.Value)));
+
             LoginCommand.ItemsInflight.Select(x => x > 0 ? Visibility.Visible : Visibility.Collapsed).Subscribe(x => IsInProgress = x);
             LoginCommand.RegisterAsyncFunction(_ => _gitHubService.Login(UserName, Password)).Subscribe(
                 u => LoggedInUser = u);
 
             this.ObservableForProperty(x => x.LoggedInUser,
                                        user => user == null ? Visibility.Hidden : Visibility.Visible).Subscribe(v => IsUserLoggedIn = v);
+
+            this.WhenAny(t => t.LoggedInUser, u => u.Value != null).Where(filter => filter).Subscribe(_ =>
+                
+                    Repositories = new ReactiveCollection<Repository>(_gitHubService.GetRepositories(LoggedInUser))
+            );
         }
 
         private string _UserName;
@@ -72,6 +78,14 @@ namespace ReactiveOctocat.ViewModels
 
 
         public ReactiveAsyncCommand LoginCommand { get; set; }
+
+        private ReactiveCollection<Repository> _Repositories;
+
+        public ReactiveCollection<Repository> Repositories
+        {
+            get { return _Repositories; }
+            set { this.RaiseAndSetIfChanged(x => x.Repositories, value); }
+        }
 
     }
 }
