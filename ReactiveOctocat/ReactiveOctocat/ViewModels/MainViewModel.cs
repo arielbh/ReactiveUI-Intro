@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -20,29 +21,22 @@ namespace ReactiveOctocat.ViewModels
             IsInProgress = Visibility.Collapsed;
 
             LoginCommand = new ReactiveAsyncCommand(this.WhenAny(t => t.UserName, t => t.Password, (x, y) => !string.IsNullOrEmpty(x.Value) && !string.IsNullOrEmpty(y.Value)));
-            LoginCommand.RegisterAsyncAction(_ =>
-            {
-                IsInProgress = Visibility.Visible;
-                LoggedInUser = _gitHubService.Login(UserName, Password);
-                IsInProgress = Visibility.Collapsed;
-            });
+
+            LoginCommand.ItemsInflight.Select(x => x > 0 ? Visibility.Visible : Visibility.Collapsed).Subscribe(x => IsInProgress = x);
+            LoginCommand.RegisterAsyncFunction(_ => _gitHubService.Login(UserName, Password)).Subscribe(
+                u => LoggedInUser = u);
 
             this.ObservableForProperty(x => x.LoggedInUser,
                                        user => user == null ? Visibility.Hidden : Visibility.Visible).Subscribe(v => IsUserLoggedIn = v);
 
+
             _cache = new MemoizingMRUCache<User, Repository[]>((user,_) =>
                                                                           _gitHubService.GetRepositories(user), 3);
-                
 
-            this.WhenAny(t => t.LoggedInUser, u => u.Value != null).Subscribe(filter =>
+            this.WhenAny(t => t.LoggedInUser, u => u.Value != null).Where(filter => filter).Subscribe(_ =>
                 
-            {
-                if (filter)
-                {
-
-                    Repositories = new ReactiveCollection<Repository>(_cache.Get(LoggedInUser));
-                }
-            });
+                    Repositories = new ReactiveCollection<Repository>(_cache.Get(LoggedInUser))
+            );
         }
 
         private string _UserName;
@@ -86,9 +80,8 @@ namespace ReactiveOctocat.ViewModels
             set { this.RaiseAndSetIfChanged(x => x.IsInProgress, value); }
         }
 
-
-
         public ReactiveAsyncCommand LoginCommand { get; set; }
+
 
         private ReactiveCollection<Repository> _Repositories;
 

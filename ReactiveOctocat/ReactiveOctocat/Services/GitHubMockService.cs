@@ -36,7 +36,7 @@ namespace ReactiveOctocat.Services
 
         public User Login(string userName, string password)
         {
-            //Thread.Sleep(5000);
+            Thread.Sleep(2000);
             return new User {Name = userName};
         }
 
@@ -44,7 +44,7 @@ namespace ReactiveOctocat.Services
         {
             _current++;
             if (_current == 4) _current = 1;
-            Thread.Sleep(1000);
+            Thread.Sleep(2000);
             return _repositories[_current];
         }
     }
