@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
@@ -19,14 +20,9 @@ namespace ReactiveOctocat.ViewModels
             IsInProgress = Visibility.Collapsed;
 
             LoginCommand = new ReactiveAsyncCommand(this.WhenAny(t => t.UserName, t => t.Password, (x, y) => !string.IsNullOrEmpty(x.Value) && !string.IsNullOrEmpty(y.Value)));
-            LoginCommand.RegisterAsyncAction(_ =>
-            {
-                IsInProgress = Visibility.Visible;
-
-                LoggedInUser = _gitHubService.Login(UserName, Password);
-                IsInProgress = Visibility.Collapsed;
-            });
-            //LoginCommand.Subscribe(_ => LoggedInUser = _gitHubService.Login(UserName, Password));
+            LoginCommand.ItemsInflight.Select(x => x > 0 ? Visibility.Visible : Visibility.Collapsed).Subscribe(x => IsInProgress = x);
+            LoginCommand.RegisterAsyncFunction(_ => _gitHubService.Login(UserName, Password)).Subscribe(
+                u => LoggedInUser = u);
 
             this.ObservableForProperty(x => x.LoggedInUser,
                                        user => user == null ? Visibility.Hidden : Visibility.Visible).Subscribe(v => IsUserLoggedIn = v);
