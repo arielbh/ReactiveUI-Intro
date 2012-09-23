@@ -1,4 +1,4 @@
-ReactiveUI Introduction Sessoin
+ReactiveUI Introduction Session
 ==================
 
 See Slides and Sample Code included in this repo.
